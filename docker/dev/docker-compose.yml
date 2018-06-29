@@ -14,6 +14,16 @@ test:
     MYSQL_PORT: 3306
     TEST_OUTPUT_DIR: /reports
 
+builder:
+  build: ../../
+  dockerfile: docker/dev/Dockerfile
+  volumes:
+    - ../../target:/wheelhouse
+  volumes_from:
+    - cache
+  entrypoint: "entrypoint.sh"
+  command: ["pip", "wheel", "--no-index", "-f /build", "."]
+
 agent:
   image: alexkoepke/ansible
   volumes:
@@ -38,4 +48,5 @@ cache:
   dockerfile: docker/dev/Dockerfile
   volumes:   
     - /tmp/cache:/cache # host:container
+    - /build
   entrypoint: "true" # ensures the container exits without doing anying.

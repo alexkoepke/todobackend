@@ -12,7 +12,7 @@ RUN . /appenv/bin/activate && \
 # PIP env variables (note: must be set after installing wheel)
 ENV WHEELHOUSE=/wheelhouse PIP_WHEEL_DIR=/wheelhouse PIP_FIND_LINKS=/wheelhouse XDG_CACHE_HOME=/cache
 
-VOLUME [ "/wheelhouse", "/reports" ]
+VOLUME [ "/wheelhouse", "/build", "/reports" ]
 
 COPY scripts/test.sh /usr/local/bin/test.sh
 RUN chmod +x /usr/local/bin/test.sh
