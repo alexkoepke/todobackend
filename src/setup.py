@@ -22,7 +22,8 @@ setup (
                           "pylint>=1.9.2",
                           "singledispatch>=3.4.0.3",
                           "six>=1.11.0",
-                          "wrapt>=1.10.11"],
+                          "wrapt>=1.10.11",
+                          "uwsgi>=2.0"],
   extras_require       = {
                             "test": [
                               "colorama>=0.3.9",

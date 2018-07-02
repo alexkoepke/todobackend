@@ -1,7 +1,9 @@
 FROM alexkoepke/todobackend-base:latest
 LABEL  maintainer="Alex Koepke <akoepke@usdigitalpartners.com>"
 
-# Install dev/build dependencies
+
+RUN echo "poop 2"
+# Install dev/build dependencie
 RUN apt-get update && \
     apt-get install -qy python-dev libmysqlclient-dev
 
