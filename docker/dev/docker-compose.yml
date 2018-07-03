@@ -1,52 +1,50 @@
-test: 
-  build: ../../
-  dockerfile: docker/dev/Dockerfile
-  volumes_from:
-    - cache
-  links:
-    - db
-  environment:
-    DJANGO_SETTINGS_MODULE: todobackend.settings.test
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: root
-    MYSQL_PASSWORD: password
-    MYSQL_HOST: db
-    MYSQL_PORT: 3306
-    TEST_OUTPUT_DIR: /reports
+version: '2'
 
-builder:
-  build: ../../
-  dockerfile: docker/dev/Dockerfile
-  volumes:
-    - ../../target:/wheelhouse
-  volumes_from:
-    - cache
-  entrypoint: "entrypoint.sh"
-  command: ["pip", "wheel", "--no-index", "-f /build", "."]
+volumes:
+  build:
+    driver: local
+  cache:
+    external: true
 
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  environment:
-    PROBE_HOST: "db"
-    PROBE_PORT: "3306"
+services:
+  test:
+    build: 
+      context: ../../
+      dockerfile: docker/dev/Dockerfile  
+    volumes:
+      - cache:/cache
+      - build:/build
+    links:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: todobackend.settings.test
+      MYSQL_HOST: db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      TEST_OUTPUT_DIR: /reports
 
-db:
-  image: mysql:5.6
-  hostname: db
-  expose:
-    - "3306"
-  environment:
-    MYSQL_ROOT_PASSWORD: password
+  builder:
+    build: 
+      context: ../../
+      dockerfile: docker/dev/Dockerfile
+    volumes:
+      - build:/build
+    entrypoint: "entrypoint.sh"
+    command: ["pip", "wheel", "--no-index", "-f /build", "."]
 
+  agent:
+    image: alexkoepke/ansible
+    links:
+      - db
+    environment:
+      PROBE_HOST: "db"
+      PROBE_PORT: "3306"
+    command: ["probe.yml"]
 
-cache:
-  build: ../../
-  dockerfile: docker/dev/Dockerfile
-  volumes:   
-    - /tmp/cache:/cache # host:container
-    - /build
-  entrypoint: "true" # ensures the container exits without doing anying.
+  db: 
+    image: mysql:5.6
+    hostname: db
+    expose:
+      - "3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password

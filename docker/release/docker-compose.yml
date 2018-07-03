@@ -1,265 +1,67 @@
-app:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  links:
-    - db
-  environment:
-    DJANGO_SETTINGS_MODULE: todobackend.settings.release
-    MYSQL_HOST: db
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-  volumes_from:
-    - webroot
-  command:
-    - uwsgi
-    - "--socket /var/www/todobackend/todobackend.sock"
-    - "--chmod-socket=666"
-    - "--module todobackend.wsgi"
-    - "--master"
-    - "--die-on-term"
+version: '2'
 
-nginx:
-  image: nginx
-  volumes:
-    - ./todobackend/.conf:/etc/nginx/confg.d/todobackend.conf
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
+volumes:
+  webroot:
+    driver: local
 
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
+services:
+  app:
+    build: 
+      context: ../../
+      dockerfile: docker/release/Dockerfile
+    links:
+      - db
+    environment:
+      DJANGO_SETTINGS_MODULE: todobackend.settings.release
+      MYSQL_HOST: db
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: password
+    volumes:
+      - webroot:/var/www/todobackend
+    command:
+      - uwsgi
+      - "--socket /var/www/todobackend/todobackend.sock"
+      - "--chmod-socket=666"
+      - "--module todobackend.wsgi"
+      - "--master"
+      - "--die-on-term"
 
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
+  # test:
+  #   image: alexkoepke/todobackend-specs
+  #   links:
+  #     - nginx
+  #   environment:
+  #     URL: http://nginx:8000/todos
+  #     JUNIT_REPORT_PATH: /reports/acceptance.xml
+  #     JUNIT_REPORT_STACK: 1
+  #   command: --reporter mocha-jenkins-reporter
 
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
+  nginx:
+    build: 
+      context: .
+      dockerfile: Dockerfile.nginx
+    links:
+      - app
+    ports:
+      - "8000:8000"
+    volumes:
+      - webroot:/var/www/todobackend
 
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
+  db:
+    image: mysql:5.6
+    expose:
+      - "3306"
+    environment:
+      MYSQL_DATABASE: todobackend
+      MYSQL_USER: todo
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
 
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  links:
-    - app
-  ports:
-    - "8000:8000"
-  volumes_from:
-    - webroot
-
-webroot:
-  build: ../../
-  dockerfile: docker/release/Dockerfile
-  volumes:
-    - /var/www/todobackend
-  entrypoint: "true"
-
-db:
-  image: mysql:5.6
-  expose:
-    - "3306"
-  environment:
-    MYSQL_DATABASE: todobackend
-    MYSQL_USER: todo
-    MYSQL_PASSWORD: password
-    MYSQL_ROOT_PASSWORD: password
-
-agent:
-  image: alexkoepke/ansible
-  volumes:
-    - ../../ansible/probe.yml:/ansible/site.yml
-  links:
-    - db
-  environment:
-    PROBE_HOST: "db"
-    PROBE_PORT: "3306"
+  agent:
+    image: alexkoepke/ansible
+    links:
+      - db
+    environment:
+      PROBE_HOST: "db"
+      PROBE_PORT: "3306"
+    command: ["probe.yml"]

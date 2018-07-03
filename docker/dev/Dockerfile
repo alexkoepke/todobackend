@@ -1,9 +1,7 @@
 FROM alexkoepke/todobackend-base:latest
 LABEL  maintainer="Alex Koepke <akoepke@usdigitalpartners.com>"
 
-
-RUN echo "poop 2"
-# Install dev/build dependencie
+# Install dev/build dependencies
 RUN apt-get update && \
     apt-get install -qy python-dev libmysqlclient-dev
 
@@ -11,17 +9,25 @@ RUN apt-get update && \
 RUN . /appenv/bin/activate && \
     pip install wheel --upgrade
 
-# PIP env variables (note: must be set after installing wheel)
+# PIP environment variables (NOTE: must be set after installing wheel)
 ENV WHEELHOUSE=/wheelhouse PIP_WHEEL_DIR=/wheelhouse PIP_FIND_LINKS=/wheelhouse XDG_CACHE_HOME=/cache
 
-VOLUME [ "/wheelhouse", "/build", "/reports" ]
+# OUTPUT: Build artefacts (Wheels) are output here
+VOLUME /wheelhouse
 
+# OUTPUT: Build cache
+VOLUME /build
+
+# OUTPUT: Test reports are output here
+VOLUME /reports
+
+# Add test entrypoint script
 COPY scripts/test.sh /usr/local/bin/test.sh
 RUN chmod +x /usr/local/bin/test.sh
 
-# Set defaults fro entrypoint and command string (overwrites entrypoint of the parent base image (double note: parent script is still availabe if we need it))
-ENTRYPOINT [ "test.sh" ]
-CMD [ "python", "manage.py", "test", "--noinput" ]
+# Set defaults for entrypoint and command string
+ENTRYPOINT ["test.sh"]
+CMD ["python", "manage.py", "test", "--noinput"]
 
 # Add application source
 COPY src /application
