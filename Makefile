@@ -21,6 +21,7 @@ test:
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up agent
 	${INFO} "Building Test"
 	@ docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) up test
+	@ docker cp $$(docker-compose -p $(DEV_PROJECT) -f $(DEV_COMPOSE_FILE) ps -q test):/reports/. reports
 	${INFO} "Make Test Complete"
 
 build:
@@ -37,6 +38,7 @@ release:
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) run --rm app manage.py collectstatic --noinput
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) run --rm app manage.py migrate --noinput
 	@ docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) up test
+	@ docker cp $$(docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) ps -q test):/reports/. reports
 	open "http://localhost:8000/"
 	${INFO} "make release finish"
 
