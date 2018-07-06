@@ -84,10 +84,8 @@ pipeline {
                   ]]
                 }
             }
-        }
       }
       finally {
-          stages {
           stage('Collect test reports') {
             steps {
               step([$class: 'JUnitResultArchiver', testResults: '**/reports/*.xml'])
