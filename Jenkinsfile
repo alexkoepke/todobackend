@@ -3,7 +3,7 @@ node {
 
     try {
         stage 'Run unit/integration tests'
-        sh 'whoami'
+        sh 'usermod -a -G docker jenkins'
         sh 'make test'
         
         stage 'Build application artefacts'
