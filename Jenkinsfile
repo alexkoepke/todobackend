@@ -3,6 +3,8 @@ node {
 
     try {
         stage 'Run unit/integration tests'
+        sh 'id -u jenkins'
+        sh 'id -u docker'
         sh 'make test'
         
         stage 'Build application artefacts'
