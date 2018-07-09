@@ -3,7 +3,7 @@ node {
 
     try {
         stage 'Run unit/integration tests'
-        sh 'usermod -a -G docker $USER'
+        sh 'whoami'
         sh 'make test'
         
         stage 'Build application artefacts'
