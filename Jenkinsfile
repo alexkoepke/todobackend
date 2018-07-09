@@ -4,6 +4,7 @@ node {
     try {
         stage 'Run unit/integration tests'
         sh 'id -u jenkins'
+        sh 'echo $UID'
         sh 'make test'
         
         stage 'Build application artefacts'
