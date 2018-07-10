@@ -22,15 +22,6 @@ node {
             sh "make login"
         }
         sh "make publish"
-
-        stage 'Deploy release'
-        sh "printf \$(git rev-parse --short HEAD) > tag.tmp"
-        def imageTag = readFile 'tag.tmp'
-        build job: DEPLOY_JOB, parameters: [[
-            $class: 'StringParameterValue',
-            name: 'IMAGE_TAG',
-            value: 'alexkoepke/todobackend:' + imageTag
-        ]]
     }
     finally {
         stage 'Collect test reports'
@@ -39,6 +30,5 @@ node {
         stage 'Clean up'
         sh 'make clean'
         sh 'make logout'
-        sh 'echo "poop"'
     }
 }
