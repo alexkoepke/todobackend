@@ -83,8 +83,6 @@ release:
 	@ docker cp $$(docker-compose -p $(REL_PROJECT) -f $(REL_COMPOSE_FILE) ps -q test):/reports/. reports
 	${CHECK} $(REL_PROJECT) $(REL_COMPOSE_FILE) test
 	${INFO} "Acceptance testing complete"
-	@ open "http://localhost:8000/"
-	${INFO} "Acceptance testing complete"
 
 clean:
 	${INFO} "Destroying development environment..."
