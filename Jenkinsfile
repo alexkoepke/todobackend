@@ -39,5 +39,6 @@ node {
         stage 'Clean up'
         sh 'make clean'
         sh 'make logout'
+        sh 'echo "poop"'
     }
 }
